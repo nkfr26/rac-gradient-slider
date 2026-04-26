@@ -8,6 +8,7 @@ import {
   useFocusRing,
   VisuallyHidden,
 } from "react-aria";
+import { filterDOMProps } from "react-aria/filterDOMProps";
 import { useSliderState } from "react-stately";
 
 type SliderContextValue = {
@@ -34,7 +35,8 @@ export function Slider(props: SliderProps) {
   return (
     <SliderContext.Provider value={{ state, trackRef, trackProps }}>
       <div
-        {...mergeProps(props, groupProps)}
+        {...mergeProps(filterDOMProps(props), groupProps)}
+        className={props.className}
         data-orientation={state.orientation}
         data-disabled={state.isDisabled || undefined}
       >
