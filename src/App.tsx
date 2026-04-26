@@ -1,12 +1,11 @@
 import { useState } from "react";
-import "./App.css";
 import { Slider, SliderTrack, SliderThumb } from "./Slider";
 
 function App() {
-  const [value, setValue] = useState([0, 50, 100]);
+  const [value, setValue] = useState([80, 90, 100]);
   return (
-    <>
-      <div className="text-white">{value.toString()}</div>
+    <div className="max-w-4xl mx-auto">
+      <div className="font-medium text-base/6 sm:text-sm/6">{value.toString()}</div>
       <Slider
         label="Opacity"
         className="group relative flex touch-none select-none flex-col disabled:opacity-50 orientation-horizontal:w-full orientation-horizontal:min-w-fit orientation-horizontal:gap-y-2 orientation-vertical:h-full orientation-vertical:min-h-fit orientation-vertical:w-1.5 orientation-vertical:items-center orientation-vertical:gap-y-2"
@@ -28,7 +27,7 @@ function App() {
           />
         </SliderTrack>
       </Slider>
-    </>
+    </div>
   );
 }
 

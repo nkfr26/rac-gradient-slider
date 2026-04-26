@@ -50,17 +50,11 @@ type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & {
 export function SliderThumb({ index, ...props }: SliderThumbProps) {
   const { state, trackRef } = useSliderContext();
   const inputRef = useRef(null);
-  const { thumbProps, inputProps } = useSliderThumb(
-    { index, trackRef, inputRef },
-    state,
-  );
+  const { thumbProps, inputProps } = useSliderThumb({ index, trackRef, inputRef }, state);
   const { focusProps } = useFocusRing();
   const zIndex = state.getThumbPercent(index + 1) === 1 ? state.values.length - index : undefined;
   return (
-    <div
-      {...mergeProps(props, thumbProps)}
-      style={{ ...thumbProps.style, zIndex }}
-    >
+    <div {...mergeProps(props, thumbProps)} style={{ ...thumbProps.style, zIndex }}>
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
