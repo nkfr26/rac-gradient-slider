@@ -15,6 +15,7 @@ type SliderContextValue = {
   trackRef: React.RefObject<HTMLDivElement | null>;
   trackProps: React.HTMLAttributes<HTMLDivElement>;
 };
+
 const SliderContext = createContext<SliderContextValue | null>(null);
 
 function useSliderContext() {
@@ -34,8 +35,8 @@ export function Slider(props: SliderProps) {
     <SliderContext.Provider value={{ state, trackRef, trackProps }}>
       <div
         {...mergeProps(props, groupProps)}
-        data-disabled={state.isDisabled || undefined}
         data-orientation={state.orientation}
+        data-disabled={state.isDisabled || undefined}
       >
         {props.children}
       </div>
@@ -43,9 +44,19 @@ export function Slider(props: SliderProps) {
   );
 }
 
-type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & {
-  index: number;
-};
+export function SliderTrack(props: React.HTMLAttributes<HTMLDivElement>) {
+  const { state, trackRef, trackProps } = useSliderContext();
+  return (
+    <div
+      {...mergeProps(props, trackProps)}
+      ref={trackRef}
+      data-orientation={state.orientation}
+      data-disabled={state.isDisabled || undefined}
+    />
+  );
+}
+
+type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & { index: number };
 
 export function SliderThumb({ index, ...props }: SliderThumbProps) {
   const { state, trackRef } = useSliderContext();
@@ -59,17 +70,5 @@ export function SliderThumb({ index, ...props }: SliderThumbProps) {
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
     </div>
-  );
-}
-
-export function SliderTrack(props: React.HTMLAttributes<HTMLDivElement>) {
-  const { state, trackRef, trackProps } = useSliderContext();
-  return (
-    <div
-      {...mergeProps(props, trackProps)}
-      ref={trackRef}
-      data-orientation={state.orientation}
-      data-disabled={state.isDisabled || undefined}
-    />
   );
 }
