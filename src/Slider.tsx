@@ -1,74 +1,81 @@
-import { useSliderState } from "react-stately";
-
+import { createContext, useContext, useRef } from "react";
 import {
-  mergeProps,
-  useFocusRing,
+  type AriaSliderProps,
   useNumberFormatter,
   useSlider,
+  mergeProps,
   useSliderThumb,
+  useFocusRing,
   VisuallyHidden,
-  type AriaSliderProps,
-  type AriaSliderThumbOptions,
 } from "react-aria";
-import React from "react";
+import { useSliderState } from "react-stately";
 
-type SliderProps = AriaSliderProps & {
-  formatOptions?: Intl.NumberFormatOptions;
-  name?: string;
+type SliderContextValue = {
+  state: ReturnType<typeof useSliderState>;
+  trackRef: React.RefObject<HTMLDivElement | null>;
+  trackProps: React.HTMLAttributes<HTMLDivElement>;
 };
+const SliderContext = createContext<SliderContextValue | null>(null);
+
+function useSliderContext() {
+  const ctx = useContext(SliderContext);
+  if (!ctx) throw new Error();
+  return ctx;
+}
+
+type SliderProps = React.HTMLAttributes<HTMLDivElement> & AriaSliderProps;
 
 export function Slider(props: SliderProps) {
-  let trackRef = React.useRef(null);
-  let numberFormatter = useNumberFormatter(props.formatOptions);
-  let state = useSliderState({ ...props, numberFormatter });
-  let { groupProps, trackProps, labelProps, outputProps } = useSlider(props, state, trackRef);
-
+  const numberFormatter = useNumberFormatter();
+  const state = useSliderState({ ...props, numberFormatter });
+  const trackRef = useRef(null);
+  const { groupProps, trackProps } = useSlider(props, state, trackRef);
   return (
-    <div {...groupProps} className={`slider ${state.orientation}`}>
-      {/* Create a container for the label and output element. */}
-      {props.label && (
-        <div className="label-container">
-          <label {...labelProps}>{props.label}</label>
-          <output {...outputProps}>{state.getThumbValueLabel(0)}</output>
-        </div>
-      )}
-      {/* The track element holds the visible track line and the thumb. */}
-      <div {...trackProps} ref={trackRef} className={`track ${state.isDisabled ? "disabled" : ""}`}>
-        <Thumb index={0} state={state} trackRef={trackRef} name={props.name} />
+    <SliderContext.Provider value={{ state, trackRef, trackProps }}>
+      <div
+        {...mergeProps(props, groupProps)}
+        data-disabled={state.isDisabled || undefined}
+        data-orientation={state.orientation}
+      >
+        {props.children}
       </div>
-    </div>
+    </SliderContext.Provider>
   );
 }
 
-type ThumbProps = Omit<AriaSliderThumbOptions, "inputRef"> & {
-  state: ReturnType<typeof useSliderState>;
+type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & {
+  index: number;
 };
 
-function Thumb(props: ThumbProps) {
-  let { state, trackRef, index = 0, name } = props;
-  let inputRef = React.useRef(null);
-  let { thumbProps, inputProps, isDragging } = useSliderThumb(
-    {
-      index,
-      trackRef,
-      inputRef,
-      name,
-    },
+export function SliderThumb({ index, ...props }: SliderThumbProps) {
+  const { state, trackRef } = useSliderContext();
+  const inputRef = useRef(null);
+  const { thumbProps, inputProps } = useSliderThumb(
+    { index, trackRef, inputRef },
     state,
   );
-
-  let zIndex = state.getPercentValue(index + 1) === 1 ? state.values.length - index : undefined;
-
-  let { focusProps, isFocusVisible } = useFocusRing();
+  const { focusProps } = useFocusRing();
+  const zIndex = state.getThumbPercent(index + 1) === 1 ? state.values.length - index : undefined;
   return (
     <div
-      {...thumbProps}
+      {...mergeProps(props, thumbProps)}
       style={{ ...thumbProps.style, zIndex }}
-      className={`thumb ${isFocusVisible ? "focus" : ""} ${isDragging ? "dragging" : ""}`}
     >
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
     </div>
+  );
+}
+
+export function SliderTrack(props: React.HTMLAttributes<HTMLDivElement>) {
+  const { state, trackRef, trackProps } = useSliderContext();
+  return (
+    <div
+      {...mergeProps(props, trackProps)}
+      ref={trackRef}
+      data-orientation={state.orientation}
+      data-disabled={state.isDisabled || undefined}
+    />
   );
 }
