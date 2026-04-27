@@ -29,12 +29,14 @@ export function useCustomSlider(
     ...sliderAria,
     trackProps: {
       ...sliderAria.trackProps,
+      onMouseDown: undefined,
       onPointerDown(e: React.PointerEvent) {
         if (e.pointerType === "mouse" && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
         }
         onDownTrack(e.clientX, e.clientY);
       },
+      onTouchStart: undefined,
     },
   };
 }
