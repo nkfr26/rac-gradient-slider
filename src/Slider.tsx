@@ -8,7 +8,7 @@ import {
 } from "react-aria";
 import { filterDOMProps } from "react-aria/filterDOMProps";
 import { useSliderState } from "react-stately";
-import { useCustomSlider, type CustomSliderProps } from "./useCustomSlider";
+import { useCustomSlider, type ColorStops, type CustomSliderProps } from "./useCustomSlider";
 
 type SliderContextValue = {
   state: ReturnType<typeof useSliderState>;
@@ -32,12 +32,12 @@ type SliderProps = Omit<
 
 export function Slider(props: SliderProps) {
   const numberFormatter = useNumberFormatter();
-  const { value, onChange, ...rest } = props;
+  const { value, onChange, ...restProps } = props;
   const state = useSliderState({
-    ...rest,
+    ...restProps,
     value: value.map((cs) => cs.value),
-    onChange: (v) => {
-      onChange((prev) => prev.map((cs, i) => ({ ...cs, value: v[i] })));
+    onChange: (value) => {
+      onChange((prev) => prev.map((cs, i) => ({ ...cs, value: value[i] })) as ColorStops);
     },
     numberFormatter,
   });

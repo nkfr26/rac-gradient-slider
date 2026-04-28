@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Slider, SliderTrack, SliderThumb } from "./Slider";
+import type { ColorStops } from "./useCustomSlider";
 
 function App() {
-  const [value, setValue] = useState([
+  const [value, setValue] = useState<ColorStops>([
     { id: crypto.randomUUID(), value: 80, color: "#000000" },
     { id: crypto.randomUUID(), value: 100, color: "#000000" },
   ]);
