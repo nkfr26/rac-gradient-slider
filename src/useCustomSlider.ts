@@ -32,11 +32,7 @@ export function useCustomSlider(
   );
   const { direction } = useLocale();
   const onDownTrack = (clientX: number, clientY: number) => {
-    if (
-      trackRef.current &&
-      !props.isDisabled &&
-      state.values.every((_, i) => !state.isThumbDragging(i))
-    ) {
+    if (trackRef.current && !props.isDisabled) {
       const { height, width, top, left } = trackRef.current.getBoundingClientRect();
       const isVertical = props.orientation === "vertical";
       const size = isVertical ? height : width;

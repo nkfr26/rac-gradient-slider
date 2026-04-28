@@ -24,12 +24,15 @@ function useSliderContext() {
   return ctx;
 }
 
-type SliderProps = Omit<React.HTMLAttributes<HTMLDivElement>, keyof CustomSliderProps> &
+type SliderProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  keyof CustomSliderProps | "defaultValue"
+> &
   CustomSliderProps;
 
 export function Slider(props: SliderProps) {
   const numberFormatter = useNumberFormatter();
-  const { value, onChange, defaultValue, ...rest } = props;
+  const { value, onChange, ...rest } = props;
   const state = useSliderState({
     ...rest,
     value: value.map((cs) => cs.value),
