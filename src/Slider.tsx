@@ -1,6 +1,5 @@
 import { createContext, useContext, useRef } from "react";
 import {
-  type AriaSliderProps,
   useNumberFormatter,
   mergeProps,
   useSliderThumb,
@@ -9,7 +8,7 @@ import {
 } from "react-aria";
 import { filterDOMProps } from "react-aria/filterDOMProps";
 import { useSliderState } from "react-stately";
-import { useCustomSlider } from "./useCustomSlider";
+import { useCustomSlider, type CustomSliderProps } from "./useCustomSlider";
 
 type SliderContextValue = {
   state: ReturnType<typeof useSliderState>;
@@ -25,11 +24,20 @@ function useSliderContext() {
   return ctx;
 }
 
-type SliderProps = React.HTMLAttributes<HTMLDivElement> & AriaSliderProps;
+type SliderProps = Omit<React.HTMLAttributes<HTMLDivElement>, keyof CustomSliderProps> &
+  CustomSliderProps;
 
 export function Slider(props: SliderProps) {
   const numberFormatter = useNumberFormatter();
-  const state = useSliderState({ ...props, numberFormatter });
+  const { value, onChange, defaultValue, ...rest } = props;
+  const state = useSliderState({
+    ...rest,
+    value: value.map((cs) => cs.value),
+    onChange: (v) => {
+      onChange((prev) => prev.map((cs, i) => ({ ...cs, value: v[i] })));
+    },
+    numberFormatter,
+  });
   const trackRef = useRef<HTMLDivElement | null>(null);
   const { groupProps, trackProps } = useCustomSlider(props, state, trackRef);
   return (

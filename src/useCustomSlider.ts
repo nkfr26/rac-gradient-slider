@@ -1,9 +1,35 @@
-import { useSlider, useLocale } from "react-aria";
+import type { RefObject } from "react";
+import { useSlider, useLocale, type AriaSliderProps } from "react-aria";
+import type { SliderState } from "react-aria-components";
+import type { Except } from "type-fest";
+
+type ColorStop = {
+  id: `${string}-${string}-${string}-${string}-${string}`;
+  value: number;
+  color: string;
+};
+
+export type CustomSliderProps = Except<AriaSliderProps, "value" | "onChange" | "defaultValue"> & {
+  value: ColorStop[];
+  onChange: React.Dispatch<React.SetStateAction<ColorStop[]>>;
+};
 
 export function useCustomSlider(
-  ...[props, state, trackRef]: Parameters<typeof useSlider>
+  props: CustomSliderProps,
+  state: SliderState,
+  trackRef: RefObject<Element | null>,
 ): ReturnType<typeof useSlider> {
-  const sliderAria = useSlider(props, state, trackRef);
+  const sliderAria = useSlider(
+    {
+      ...props,
+      value: props.value.map((cs) => cs.value),
+      onChange: (value) => {
+        props.onChange(props.value.map((cs, i) => ({ ...cs, value: value[i] })));
+      },
+    },
+    state,
+    trackRef,
+  );
   const { direction } = useLocale();
   const onDownTrack = (clientX: number, clientY: number) => {
     if (
@@ -22,7 +48,11 @@ export function useCustomSlider(
         percent = 1 - percent;
       }
       const value = state.getPercentValue(percent);
-      props.onChange?.([...state.values, value].toSorted((a, b) => a - b));
+      props.onChange((prev) =>
+        [...prev, { value, id: crypto.randomUUID(), color: "#000000" }].toSorted(
+          (a, b) => a.value - b.value,
+        ),
+      );
     }
   };
   return {
