@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useRef, type ReactNode } from "react";
 import {
   useNumberFormatter,
   mergeProps,
@@ -7,8 +7,9 @@ import {
   VisuallyHidden,
 } from "react-aria";
 import { filterDOMProps } from "react-aria/filterDOMProps";
-import { useSliderState } from "react-stately";
+import { useSliderState, type SliderStateOptions } from "react-stately";
 import { useCustomSlider, type ColorStops, type CustomSliderProps } from "./useCustomSlider";
+import type { Except } from "type-fest";
 
 type SliderContextValue = {
   state: ReturnType<typeof useSliderState>;
@@ -24,20 +25,19 @@ function useSliderContext() {
   return ctx;
 }
 
-type SliderProps = Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  keyof CustomSliderProps | "defaultValue"
-> &
-  CustomSliderProps;
+type SliderProps = CustomSliderProps &
+  Except<SliderStateOptions<number[]>, "value" | "onChange" | "numberFormatter"> & {
+    className: string;
+    children: ReactNode;
+  };
 
 export function Slider(props: SliderProps) {
   const numberFormatter = useNumberFormatter();
-  const { value, onChange, ...restProps } = props;
   const state = useSliderState({
-    ...restProps,
-    value: value.map((cs) => cs.value),
+    ...props,
+    value: props.value.map((cs) => cs.value),
     onChange: (value) => {
-      onChange((prev) => prev.map((cs, i) => ({ ...cs, value: value[i] })) as ColorStops);
+      props.onChange((prev) => prev.map((cs, i) => ({ ...cs, value: value[i] })) as ColorStops);
     },
     numberFormatter,
   });

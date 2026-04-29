@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 import { useSlider, useLocale, type AriaSliderProps } from "react-aria";
-import type { SliderState } from "react-aria-components";
+import type { SliderState } from "react-stately";
 import type { Except } from "type-fest";
 
 type ColorStop = {
