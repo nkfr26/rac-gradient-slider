@@ -21,15 +21,8 @@ export function useCustomSlider(
   state: SliderState,
   trackRef: RefObject<Element | null>,
 ): ReturnType<typeof useSlider> {
-  const { onChange, ...restProps } = props;
-  const sliderAria = useSlider(
-    {
-      ...restProps,
-      value: restProps.value.map((cs) => cs.value),
-    },
-    state,
-    trackRef,
-  );
+  const { value, onChange, ...restProps } = props;
+  const sliderAria = useSlider(restProps, state, trackRef);
   const { direction } = useLocale();
   const onDownTrack = (clientX: number, clientY: number) => {
     if (trackRef.current && !restProps.isDisabled) {
