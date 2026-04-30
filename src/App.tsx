@@ -21,7 +21,7 @@ function App() {
             <SliderThumb
               key={cs.id}
               index={index}
-              className="top-[50%] left-[50%] size-5 rounded-full border border-fg/10 bg-white outline-hidden ring-black transition-[width,height]"
+              className="top-1/2 left-1/2 size-5 rounded-full border border-fg/10 bg-white outline-hidden ring-black transition-[width,height]"
             >
               <div className="absolute top-full left-1/2 -translate-x-1/2 font-medium text-base/6 sm:text-sm/6">
                 {cs.value}
