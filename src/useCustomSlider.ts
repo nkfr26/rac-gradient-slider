@@ -4,7 +4,7 @@ import type { SliderState } from "react-stately";
 import type { Except } from "type-fest";
 
 type ColorStop = {
-  id: ReturnType<typeof crypto.randomUUID>;
+  id: string;
   value: number;
   color: string;
 };
@@ -23,6 +23,7 @@ export function useCustomSlider(
 ): ReturnType<typeof useSlider> {
   const { value, onChange, ...restProps } = props;
   const sliderAria = useSlider(restProps, state, trackRef);
+
   const { direction } = useLocale();
   const onDownTrack = (clientX: number, clientY: number) => {
     if (trackRef.current && !restProps.isDisabled) {
@@ -39,24 +40,43 @@ export function useCustomSlider(
       const value = state.getPercentValue(percent);
       onChange(
         (prev) =>
-          [...prev, { value, id: crypto.randomUUID(), color: "#000000" }].toSorted(
+          [...prev, { value, id: crypto.randomUUID(), color: "#ffffff" }].toSorted(
             (a, b) => a.value - b.value,
           ) as ColorStops,
       );
     }
+  };
+
+  const generateBackground = () => {
+    let to: string;
+    if (restProps.orientation === "vertical") {
+      to = "top";
+    } else if (direction === "ltr") {
+      to = "right";
+    } else {
+      to = "left";
+    }
+    const linearColorStop = value
+      .map(({ color, value }) => `${color} ${state.getValuePercent(value) * 100}%`)
+      .join(", ");
+    return `linear-gradient(in oklab to ${to}, ${linearColorStop})`;
   };
   return {
     ...sliderAria,
     trackProps: {
       ...sliderAria.trackProps,
       onMouseDown: undefined,
+      onTouchStart: undefined,
       onPointerDown(e: React.PointerEvent) {
         if (e.pointerType === "mouse" && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
           return;
         }
         onDownTrack(e.clientX, e.clientY);
       },
-      onTouchStart: undefined,
+      style: {
+        ...sliderAria.trackProps.style,
+        background: generateBackground(),
+      },
     },
   };
 }

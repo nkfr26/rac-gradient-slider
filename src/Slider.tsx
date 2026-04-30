@@ -82,6 +82,7 @@ export function SliderThumb({ index, ...props }: SliderThumbProps) {
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
+      {props.children}
     </div>
   );
 }
