@@ -16,14 +16,14 @@ function App() {
         value={value}
         onChange={setValue}
       >
-        <SliderTrack className="bg-(--slider-track-bg,var(--color-secondary)) group/track relative cursor-default rounded-full grow group-orientation-horizontal:h-1.5 group-orientation-horizontal:w-full group-orientation-vertical:w-1.5 group-orientation-vertical:flex-1 disabled:cursor-default disabled:opacity-60 mt-2 mb-6">
+        <SliderTrack className="bg-(--slider-track-bg,var(--color-secondary)) group/track relative cursor-default rounded-full grow group-orientation-horizontal:h-1.5 group-orientation-horizontal:w-full group-orientation-vertical:w-1.5 group-orientation-vertical:flex-1 disabled:cursor-default disabled:opacity-60 mt-6 mb-2">
           {value.map((cs, index) => (
             <SliderThumb
               key={cs.id}
               index={index}
               className="top-1/2 left-1/2 size-5 rounded-full border border-fg/10 bg-white outline-hidden ring-black transition-[width,height]"
             >
-              <div className="absolute top-full left-1/2 -translate-x-1/2 font-medium text-base/6 sm:text-sm/6">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 font-medium text-base/6 sm:text-sm/6">
                 {cs.value}
               </div>
             </SliderThumb>
