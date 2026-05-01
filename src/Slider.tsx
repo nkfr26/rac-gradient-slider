@@ -1,18 +1,18 @@
-import { createContext, useContext, useRef, type ReactNode } from "react";
+import { createContext, useContext, useRef } from "react";
 import {
   useNumberFormatter,
   mergeProps,
-  useSliderThumb,
   useFocusRing,
   VisuallyHidden,
 } from "react-aria";
 import { filterDOMProps } from "react-aria/filterDOMProps";
-import { useSliderState, type SliderStateOptions } from "react-stately";
-import { useCustomSlider, type ColorStops, type CustomSliderProps } from "./useCustomSlider";
+import { useCustomSlider, type CustomSliderProps } from "./useCustomSlider";
+import { useCustomSliderState, type CustomSliderStateOptions } from "./useCustomSliderState";
 import type { Except } from "type-fest";
+import { useCustomSliderThumb } from "./useCustomSliderThumb";
 
 type SliderContextValue = {
-  state: ReturnType<typeof useSliderState>;
+  state: ReturnType<typeof useCustomSliderState>;
   trackRef: React.RefObject<HTMLDivElement | null>;
   trackProps: React.HTMLAttributes<HTMLDivElement>;
 };
@@ -26,19 +26,13 @@ function useSliderContext() {
 }
 
 type SliderProps = CustomSliderProps &
-  Except<SliderStateOptions<number[]>, "value" | "onChange" | "numberFormatter"> & {
-    className: string;
-    children: ReactNode;
-  };
+  Except<CustomSliderStateOptions, "numberFormatter"> &
+  Except<React.HTMLAttributes<HTMLDivElement>, "onChange">;
 
 export function Slider(props: SliderProps) {
   const numberFormatter = useNumberFormatter();
-  const state = useSliderState({
+  const state = useCustomSliderState({
     ...props,
-    value: props.value.map((cs) => cs.value),
-    onChange: (value) => {
-      props.onChange((prev) => prev.map((cs, i) => ({ ...cs, value: value[i] })) as ColorStops);
-    },
     numberFormatter,
   });
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -67,16 +61,14 @@ type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & { index: number }
 export function SliderThumb({ index, ...props }: SliderThumbProps) {
   const { state, trackRef } = useSliderContext();
   const inputRef = useRef(null);
-  const { thumbProps, inputProps, isDragging } = useSliderThumb(
+  const { thumbProps, inputProps, isDragging } = useCustomSliderThumb(
     { index, trackRef, inputRef },
     state,
   );
   const { focusProps } = useFocusRing();
-  const zIndex = state.getThumbPercent(index + 1) === 1 ? state.values.length - index : undefined;
   return (
     <div
       {...mergeProps(props, thumbProps)}
-      style={{ ...thumbProps.style, zIndex }}
       data-dragging={isDragging || undefined}
     >
       <VisuallyHidden>

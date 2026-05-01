@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Slider, SliderTrack, SliderThumb } from "./Slider";
-import type { ColorStops } from "./useCustomSlider";
+import type { ColorStops } from "./useCustomSliderState";
 
 function App() {
   const [value, setValue] = useState<ColorStops>([
