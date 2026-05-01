@@ -58,15 +58,8 @@ export function Slider(props: SliderProps) {
 }
 
 export function SliderTrack(props: React.HTMLAttributes<HTMLDivElement>) {
-  const { state, trackRef, trackProps } = useSliderContext();
-  return (
-    <div
-      {...mergeProps(props, trackProps)}
-      ref={trackRef}
-      data-orientation={state.orientation}
-      data-disabled={state.isDisabled || undefined}
-    />
-  );
+  const { trackRef, trackProps } = useSliderContext();
+  return <div {...mergeProps(props, trackProps)} ref={trackRef} />;
 }
 
 type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & { index: number };
@@ -74,11 +67,18 @@ type SliderThumbProps = React.HTMLAttributes<HTMLDivElement> & { index: number }
 export function SliderThumb({ index, ...props }: SliderThumbProps) {
   const { state, trackRef } = useSliderContext();
   const inputRef = useRef(null);
-  const { thumbProps, inputProps } = useSliderThumb({ index, trackRef, inputRef }, state);
+  const { thumbProps, inputProps, isDragging } = useSliderThumb(
+    { index, trackRef, inputRef },
+    state,
+  );
   const { focusProps } = useFocusRing();
   const zIndex = state.getThumbPercent(index + 1) === 1 ? state.values.length - index : undefined;
   return (
-    <div {...mergeProps(props, thumbProps)} style={{ ...thumbProps.style, zIndex }}>
+    <div
+      {...mergeProps(props, thumbProps)}
+      style={{ ...thumbProps.style, zIndex }}
+      data-dragging={isDragging || undefined}
+    >
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>

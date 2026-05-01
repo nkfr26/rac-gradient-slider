@@ -44,12 +44,11 @@ export function useCustomSlider(
         "oklab",
       );
       const color = formatHex(interpolator(state.getValuePercent(value)));
-      onChange(
-        (prev) =>
-          [...prev, { id: crypto.randomUUID(), value, color }].toSorted(
-            (a, b) => a.value - b.value,
-          ) as ColorStops,
-      );
+      onChange((prev) => {
+        return [...prev, { id: crypto.randomUUID(), value, color }].toSorted(
+          (a, b) => a.value - b.value,
+        ) as ColorStops;
+      });
     }
   };
 
