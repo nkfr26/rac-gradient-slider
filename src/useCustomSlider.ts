@@ -2,6 +2,7 @@ import type { RefObject } from "react";
 import { useSlider, useLocale, type AriaSliderProps } from "react-aria";
 import type { SliderState } from "react-stately";
 import type { Except } from "type-fest";
+import { formatHex, interpolate } from "culori";
 
 type ColorStop = {
   id: string;
@@ -21,7 +22,7 @@ export function useCustomSlider(
   state: SliderState,
   trackRef: RefObject<Element | null>,
 ): ReturnType<typeof useSlider> {
-  const { value, onChange, ...restProps } = props;
+  const { value: propsValue, onChange, ...restProps } = props;
   const sliderAria = useSlider(restProps, state, trackRef);
 
   const { direction } = useLocale();
@@ -38,9 +39,14 @@ export function useCustomSlider(
         percent = 1 - percent;
       }
       const value = state.getPercentValue(percent);
+      const interpolator = interpolate(
+        propsValue.map((cs) => [cs.color, state.getValuePercent(cs.value)]),
+        "oklab",
+      );
+      const color = formatHex(interpolator(state.getValuePercent(value)));
       onChange(
         (prev) =>
-          [...prev, { value, id: crypto.randomUUID(), color: "#ffffff" }].toSorted(
+          [...prev, { id: crypto.randomUUID(), value, color }].toSorted(
             (a, b) => a.value - b.value,
           ) as ColorStops,
       );
@@ -56,7 +62,7 @@ export function useCustomSlider(
     } else {
       to = "left";
     }
-    const linearColorStop = value
+    const linearColorStop = propsValue
       .map(({ color, value }) => `${color} ${state.getValuePercent(value) * 100}%`)
       .join(", ");
     return `linear-gradient(in oklab to ${to}, ${linearColorStop})`;
