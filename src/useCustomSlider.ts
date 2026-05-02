@@ -5,7 +5,9 @@ import { clamp, snapValueToStep } from "react-stately/private/utils/number";
 import { useGlobalListeners } from "react-aria/private/utils/useGlobalListeners";
 import type { ColorStops, useCustomSliderState } from "./useCustomSliderState";
 
-export type CustomSliderProps = Except<AriaSliderProps, "value" | "onChange">;
+export type CustomSliderProps = Except<AriaSliderProps, "value" | "onChange"> & {
+  mode: "oklab" | "oklch";
+};
 
 export function useCustomSlider(
   props: CustomSliderProps,
@@ -59,7 +61,7 @@ export function useCustomSlider(
               );
               const color = state.getInterpolatedColor(
                 value,
-                "oklab",
+                props.mode,
                 realTimeTrackDraggingIndex.current,
               );
               return { ...cs, value, color };
@@ -97,7 +99,7 @@ export function useCustomSlider(
 
       const uuid = crypto.randomUUID();
       const value = state.getPercentValue(percent);
-      const color = state.getInterpolatedColor(value, "oklab");
+      const color = state.getInterpolatedColor(value, props.mode);
       const newColorStops = [...state.value, { id: uuid, value, color }].toSorted(
         (a, b) => a.value - b.value,
       ) as ColorStops;
@@ -144,7 +146,7 @@ export function useCustomSlider(
     const linearColorStop = state.value
       .map(({ color, value }) => `${color} ${state.getValuePercent(value) * 100}%`)
       .join(", ");
-    return `linear-gradient(in oklab to ${to}, ${linearColorStop})`;
+    return `linear-gradient(in ${props.mode} to ${to}, ${linearColorStop})`;
   };
   return {
     ...sliderAria,

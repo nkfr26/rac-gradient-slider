@@ -14,6 +14,7 @@ function App() {
         className="group relative flex touch-none select-none flex-col disabled:opacity-50 orientation-horizontal:w-full orientation-horizontal:min-w-fit orientation-horizontal:gap-y-2 orientation-vertical:h-full orientation-vertical:min-h-fit orientation-vertical:w-1.5 orientation-vertical:items-center orientation-vertical:gap-y-2 pt-6 pb-2"
         value={value}
         onChange={setValue}
+        mode={"oklab"}
       >
         <SliderTrack className="bg-(--slider-track-bg,var(--color-secondary)) group/track relative rounded-full grow group-orientation-horizontal:h-2 group-orientation-horizontal:w-full group-orientation-vertical:w-1.5 group-orientation-vertical:flex-1 disabled:cursor-default disabled:opacity-60 cursor-copy">
           {value.map((cs, index) => (
