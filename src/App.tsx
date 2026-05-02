@@ -8,11 +8,10 @@ function App() {
     { id: crypto.randomUUID(), value: 100, color: "#00ff00" },
   ]);
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="font-medium text-base/6 sm:text-sm/6">{JSON.stringify(value)}</div>
+    <div className="px-12 pt-6 max-w-4xl mx-auto">
       <Slider
         label="Opacity"
-        className="group relative flex touch-none select-none flex-col disabled:opacity-50 orientation-horizontal:w-full orientation-horizontal:min-w-fit orientation-horizontal:gap-y-2 orientation-vertical:h-full orientation-vertical:min-h-fit orientation-vertical:w-1.5 orientation-vertical:items-center orientation-vertical:gap-y-2 pt-6 pb-2 px-3"
+        className="group relative flex touch-none select-none flex-col disabled:opacity-50 orientation-horizontal:w-full orientation-horizontal:min-w-fit orientation-horizontal:gap-y-2 orientation-vertical:h-full orientation-vertical:min-h-fit orientation-vertical:w-1.5 orientation-vertical:items-center orientation-vertical:gap-y-2 pt-6 pb-2"
         value={value}
         onChange={setValue}
       >
@@ -30,6 +29,13 @@ function App() {
           ))}
         </SliderTrack>
       </Slider>
+      <pre className="font-medium text-base/6 sm:text-sm/6">
+        {JSON.stringify(
+          value.map((cs) => ({ ...cs, id: cs.id.split("-")[0] })),
+          null,
+          2,
+        )}
+      </pre>
     </div>
   );
 }

@@ -1,10 +1,5 @@
 import { createContext, useContext, useRef } from "react";
-import {
-  useNumberFormatter,
-  mergeProps,
-  useFocusRing,
-  VisuallyHidden,
-} from "react-aria";
+import { useNumberFormatter, mergeProps, useFocusRing, VisuallyHidden } from "react-aria";
 import { filterDOMProps } from "react-aria/filterDOMProps";
 import { useCustomSlider, type CustomSliderProps } from "./useCustomSlider";
 import { useCustomSliderState, type CustomSliderStateOptions } from "./useCustomSliderState";
@@ -67,10 +62,7 @@ export function SliderThumb({ index, ...props }: SliderThumbProps) {
   );
   const { focusProps } = useFocusRing();
   return (
-    <div
-      {...mergeProps(props, thumbProps)}
-      data-dragging={isDragging || undefined}
-    >
+    <div {...mergeProps(props, thumbProps)} data-dragging={isDragging || undefined}>
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
