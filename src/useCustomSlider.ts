@@ -105,8 +105,8 @@ export function useCustomSlider(
 
       e.preventDefault();
 
-      if (newColorStopIndex >= 0 && state.isThumbEditable(newColorStopIndex)) {
-        realTimeTrackDraggingIndex.current = newColorStops.findIndex((cs) => cs.id === uuid);
+      if (newColorStopIndex >= 0) {
+        realTimeTrackDraggingIndex.current = newColorStopIndex;
         state.setFocusedThumb(realTimeTrackDraggingIndex.current);
         currentPointer.current = id;
 
