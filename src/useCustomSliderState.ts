@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { formatHex, interpolate } from "culori";
 import { useSliderState, type SliderStateOptions } from "react-stately";
 import type { Except } from "type-fest";
@@ -27,6 +28,21 @@ export function useCustomSliderState(props: CustomSliderStateOptions) {
     },
   });
 
+  const draggingRef = useRef(new Set<number>());
+
+  const isThumbDragging = (index: number) => {
+    return draggingRef.current.has(index);
+  };
+
+  const setThumbDragging = (index: number, dragging: boolean) => {
+    if (dragging) {
+      draggingRef.current.add(index);
+    } else {
+      draggingRef.current.delete(index);
+    }
+    state.setThumbDragging(index, dragging);
+  };
+
   const getInterpolatedColor = (value: number, mode: "oklab" | "oklch", filterIndex?: number) => {
     const interpolator = interpolate(
       props.value
@@ -36,5 +52,12 @@ export function useCustomSliderState(props: CustomSliderStateOptions) {
     );
     return formatHex(interpolator(state.getValuePercent(value)));
   };
-  return { ...state, value: props.value, onChange: props.onChange, getInterpolatedColor };
+  return {
+    ...state,
+    isThumbDragging,
+    setThumbDragging,
+    value: props.value,
+    onChange: props.onChange,
+    getInterpolatedColor,
+  };
 }
